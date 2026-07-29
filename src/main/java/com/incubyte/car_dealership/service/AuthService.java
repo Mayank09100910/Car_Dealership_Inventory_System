@@ -32,21 +32,21 @@ public class AuthService {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
-    public Map<String, String> registerUser(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
-        }
-
-        User user = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole() != null ? request.getRole().toUpperCase() : "USER")
-                .build();
-
-        userRepository.save(user);
-        return Map.of("message", "User registered successfully");
+   public Map<String, String> registerUser(RegisterRequest request) {
+    if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        throw new RuntimeException("Username already exists");
     }
 
+    User user = User.builder()
+            .username(request.getUsername())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role("USER")
+            .build();
+
+    userRepository.save(user);
+
+    return Map.of("message", "User registered successfully");
+}
     public LoginResponse loginUser(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
