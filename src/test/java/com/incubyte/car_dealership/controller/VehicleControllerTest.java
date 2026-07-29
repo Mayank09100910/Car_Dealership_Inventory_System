@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,26 +58,29 @@ public class VehicleControllerTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/vehicles/" + vehicleId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatePayload))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.model").value("Camry Hybrid"))
-                .andExpect(jsonPath("$.price").value(28000.00));
+mockMvc.perform(put("/api/vehicles/" + vehicleId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatePayload))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.model").value("Camry Hybrid"))
+        .andExpect(jsonPath("$.price").value(28000.00));
 
-        // 3. Get all vehicles
-        mockMvc.perform(get("/api/vehicles"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].model").value("Camry Hybrid"));
+// 3. Get the updated vehicle
+mockMvc.perform(get("/api/vehicles/" + vehicleId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(vehicleId))
+        .andExpect(jsonPath("$.make").value("Toyota"))
+        .andExpect(jsonPath("$.model").value("Camry Hybrid"))
+        .andExpect(jsonPath("$.price").value(28000.00))
+        .andExpect(jsonPath("$.quantity").value(8));
 
-        // 4. Delete the vehicle
-        mockMvc.perform(delete("/api/vehicles/" + vehicleId))
-                .andExpect(status().isNoContent());
+// 4. Delete
+mockMvc.perform(delete("/api/vehicles/" + vehicleId))
+        .andExpect(status().isNoContent());
 
-        // Verify deleted (returns 404 or empty list)
-        mockMvc.perform(get("/api/vehicles"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+// 5. Verify deleted
+mockMvc.perform(get("/api/vehicles/" + vehicleId))
+        .andExpect(status().isNotFound());
     }
 
     @Test
