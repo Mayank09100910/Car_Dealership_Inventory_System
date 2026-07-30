@@ -29,21 +29,26 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+   @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .cors(cors -> {})
+        .csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> 
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/actuator/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(
+            jwtAuthenticationFilter,
+            UsernamePasswordAuthenticationFilter.class
+        );
 
-        return http.build();
-    }
-
+    return http.build();
+}
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
