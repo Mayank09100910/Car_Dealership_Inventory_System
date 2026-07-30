@@ -21,7 +21,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 export default function App() {
   // Theme State (defaults to false / Light mode)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -96,7 +96,7 @@ export default function App() {
     if (!user) return;
     setIsLoading(true);
     try {
-      let url = '/api/vehicles';
+      let url = `${API_BASE_URL}/api/vehicles`;
       if (isSearch) {
         const queryParams = new URLSearchParams();
         if (searchMake) queryParams.append('make', searchMake);
@@ -104,7 +104,7 @@ export default function App() {
         if (searchCategory) queryParams.append('category', searchCategory);
         if (searchMinPrice) queryParams.append('minPrice', searchMinPrice);
         if (searchMaxPrice) queryParams.append('maxPrice', searchMaxPrice);
-        url = `/api/vehicles/search?${queryParams.toString()}`;
+       url = `${API_BASE_URL}/api/vehicles/search?${queryParams.toString()}`;
       }
 
       const response = await fetch(url, {
@@ -141,7 +141,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch('/api/auth/login', {
+     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -172,7 +172,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch('/api/auth/register', {
+     const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -214,7 +214,8 @@ export default function App() {
   // Actions: Purchase
   const handlePurchase = async (vehicleId) => {
     try {
-      const response = await fetch(`/api/vehicles/${vehicleId}/purchase`, {
+     const response = await fetch(`${API_BASE_URL}/api/vehicles/${vehicleId}/purchase`, {
+
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${user.token}`
@@ -271,7 +272,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch('/api/vehicles', {
+     const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -307,7 +308,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch(`/api/vehicles/${selectedVehicle.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/vehicles/${selectedVehicle.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -338,7 +339,7 @@ export default function App() {
   const handleDeleteVehicle = async (vehicleId) => {
     if (!window.confirm('Are you sure you want to delete this vehicle from inventory?')) return;
     try {
-      const response = await fetch(`/api/vehicles/${vehicleId}`, {
+     const response = await fetch(`${API_BASE_URL}/api/vehicles/${vehicleId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${user.token}`
@@ -365,7 +366,7 @@ export default function App() {
       return;
     }
     try {
-      const response = await fetch(`/api/vehicles/${selectedVehicle.id}/restock`, {
+     const response = await fetch(`${API_BASE_URL}/api/vehicles/${selectedVehicle.id}/restock`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
